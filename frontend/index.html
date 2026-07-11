@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Personal Planner</title>
+
+<style>
+
+body{background:#5398bacc;  font-family:Arial;}
+.total{  width:400px;  margin:40px auto;  background:lightsalmon; padding:20px; border-radius:10px; ;}
+h1{ text-align:center;}
+input{  width:100%;  padding:10px; box-sizing:border-box;}
+button{ width:100%; padding:10px;  }
+
+
+</style>
+
+</head>
+
+<body>
+<br><br><br><br><br><br><br>
+<div class="total" >
+
+    <h1> Personal Planner</h1>
+
+    <input  type="text"  id="activity"  placeholder="Enter Activity">
+
+    <input type="date" id="date">
+
+    <button onclick="addEvent()">  Add Event </button> 
+    <!-- <button onclick="send()">Send</button> -->
+<div id="eventList"></div>
+
+</div>
+
+</body>
+<script>
+
+function addEvent(){
+
+    let activity = document.getElementById("activity").value;
+    let date = document.getElementById("date").value;
+    let card=document.createElement("div");
+    let title=document.createElement("p");
+    title.textContent=activity;
+    let eventDate=document.createElement("p");
+    eventDate.textContent=date
+    let deleteBtn=document.createElement("button");
+    deleteBtn.textContent="🗑️ Delete";
+     deleteBtn.onclick=function(){
+        card.remove();
+    }
+    card.appendChild(title);
+    card.appendChild(eventDate);
+    card.appendChild(deleteBtn);
+    document.getElementById("eventList").appendChild(card);
+    document.getElementById("activity").value="";
+    document.getElementById("date").value="";
+
+}
+// async function send() {
+//     var jsonObject = {
+//         name: "pranessh"
+//     };
+
+//     await fetch("http://localhost:2530/ourFirstPost", {
+//         method: "POST",
+//         headers: {
+//             "Content-Type": "application/json"
+//         },
+//         body: JSON.stringify(jsonObject)
+//     });
+// }
+ 
+ </script>
+</html>
