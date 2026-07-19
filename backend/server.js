@@ -22,11 +22,22 @@ app.post("/sendActivity", function(req, res){
     }
     var databaseFile = fs.readFileSync(databasePath,"utf-8")
     var databaseObj = JSON.parse(databaseFile)
-
+     var item = false
     for( i in databaseObj ){
         console.log(i)
         console.log(databaseObj[i])
+        
+        if(i==username){
+             databaseObj[i].push(activityObject)
+             item = true 
+             break
+        }
+       
     }
+     if(item == false){
+            databaseObj[username] = [activityObject]
+        }
+
     //Pranessh pls do the following logic-
     // Try to find the username posted by the frontend in the database file and if we get the username in the file we just add the new activity inside the array of the username, but if we dont find the username then we just need to create a new key/property and add it inside the database file
 })   
