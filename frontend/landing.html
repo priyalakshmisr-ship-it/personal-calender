@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Planner</title>
+</head>
+<body>
+    Username <input id="username" type="text">
+    Password <input id="password" type="text">
+    <button onclick="signUp()">Sign Up</button>
+    <button onclick="signIn()">Sign In</button>
+    <script>
+        async function signUp(){
+            var usernameInput = document.getElementById("username").value 
+            var passwordInput = document.getElementById("password").value 
+            var userObject = {
+                "username" : usernameInput,
+                "password" : passwordInput
+            }
+            var response = await fetch("/receiveSignup",{
+                "method" : "POST",
+                "headers" : {
+                    "Content-type" : "application/json"
+                },
+                "body" : JSON.stringify(userObject)
+            })
+            var responseText = await response.text()
+            alert(responseText)
+        }
+
+        async function signIn(){
+            var usernameInput = document.getElementById("username").value 
+            var passwordInput = document.getElementById("password").value 
+            var userObject = {
+                "username" : usernameInput,
+                "password" : passwordInput
+            }
+            await fetch("/receiveSignin",{
+                "method" : "POST",
+                "headers" : {
+                    "Content-type" : "application/json"
+                },
+                "body" : JSON.stringify(userObject)
+            })
+        }
+    </script>
+</body>
+</html>

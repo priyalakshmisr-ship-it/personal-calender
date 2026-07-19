@@ -3,12 +3,49 @@ const cors = require("cors")
 const path = require("path")
 const fs = require('fs')
 const databasePath = '../database/activityData.json'
+const userDatabasePath = '../database/users.json'
 
 const app = express()
 app.use(express.json())  
 
 app.get('/',function(req,res){
+    res.sendFile('C:/Users/mihir/OneDrive/Desktop/Classes/Pranessh Web Dev Classes/Personal Calendar/frontend/landing.html')
+})
+
+app.get('/personalCalendar',function(req,res){
     res.sendFile('C:/Users/mihir/OneDrive/Desktop/Classes/Pranessh Web Dev Classes/Personal Calendar/frontend/index.html')
+})
+
+app.post('/receiveSignup', function(req,res){
+    var username = req.body.username
+    var password = req.body.password
+    var userDatabaseFile = fs.readFileSync(userDatabasePath,"utf-8")
+    var userDatabaseArray = JSON.parse(userDatabaseFile)
+     var item = false
+    for(i=0;i<userDatabaseArray.length;i=i+1){        
+        if(userDatabaseArray[i].username == username){             
+             item = true 
+             break
+        }       
+    }
+    if(item == true){
+        res.send("Username already exists")
+    }
+    else if(item == false){
+        var obj = {
+            "username" : username,
+            "password" : password
+        }
+        userDatabaseArray.push(obj)
+        fs.writeFileSync(userDatabasePath, JSON.stringify(userDatabaseArray))
+        res.send("Account created")
+    }
+})
+
+app.post('/receiveSignin', function(req,res){
+    var username = req.body.username
+    var password = req.body.password
+    // res.redirect("/personalCalendar")
 })
 
 app.post("/sendActivity", function(req, res){
@@ -27,19 +64,17 @@ app.post("/sendActivity", function(req, res){
         console.log(i)
         console.log(databaseObj[i])
         
-        if(i==username){
+        if(i == username){
              databaseObj[i].push(activityObject)
              item = true 
              break
         }
        
     }
-     if(item == false){
-            databaseObj[username] = [activityObject]
-        }
-
-    //Pranessh pls do the following logic-
-    // Try to find the username posted by the frontend in the database file and if we get the username in the file we just add the new activity inside the array of the username, but if we dont find the username then we just need to create a new key/property and add it inside the database file
+    if(item == false){
+        databaseObj[username] = [activityObject]
+    }
+    fs.writeFileSync(databasePath, JSON.stringify(databaseObj))
 })   
 
 app.listen(2530, function () {
