@@ -1,6 +1,7 @@
 const express = require("express")
 const cors = require("cors")
 const path = require("path")
+const bcrypt = require("bcryptjs")
 const fs = require('fs')
 const databasePath = '../database/activityData.json'
 const userDatabasePath = '../database/users.json'
@@ -19,6 +20,8 @@ app.get('/personalCalendar',function(req,res){
 app.post('/receiveSignup', function(req,res){
     var username = req.body.username
     var password = req.body.password
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(password, salt);
     var userDatabaseFile = fs.readFileSync(userDatabasePath,"utf-8")
     var userDatabaseArray = JSON.parse(userDatabaseFile)
      var item = false
@@ -34,7 +37,7 @@ app.post('/receiveSignup', function(req,res){
     else if(item == false){
         var obj = {
             "username" : username,
-            "password" : password
+            "password" : hash
         }
         userDatabaseArray.push(obj)
         fs.writeFileSync(userDatabasePath, JSON.stringify(userDatabaseArray))
@@ -45,7 +48,6 @@ app.post('/receiveSignup', function(req,res){
 app.post('/receiveSignin', function(req,res){
     var username = req.body.username
     var password = req.body.password
-    // res.redirect("/personalCalendar")
     var userDatabaseFile = fs.readFileSync(userDatabasePath,"utf-8")
     var userDatabaseArray = JSON.parse(userDatabaseFile)
     var item = false
@@ -53,7 +55,7 @@ app.post('/receiveSignin', function(req,res){
     for(i=0;i<userDatabaseArray.length;i=i+1){        
         if(userDatabaseArray[i].username == username){             
              item = true 
-             if(userDatabaseArray[i].password == password){
+             if(bcrypt.compareSync(password, userDatabaseArray[i].password) == true){
                 passwordMatch = true
              }
              break
