@@ -47,21 +47,27 @@ app.post('/receiveSignin', function(req,res){
     var password = req.body.password
     // res.redirect("/personalCalendar")
     var userDatabaseFile = fs.readFileSync(userDatabasePath,"utf-8")
-var userDatabaseArray = JSON.parse(userDatabaseFile)
-     var item = false
+    var userDatabaseArray = JSON.parse(userDatabaseFile)
+    var item = false
+    var passwordMatch = false
     for(i=0;i<userDatabaseArray.length;i=i+1){        
         if(userDatabaseArray[i].username == username){             
              item = true 
+             if(userDatabaseArray[i].password == password){
+                passwordMatch = true
+             }
              break
         }       
     }
-    if(item == true){
-        
-        res.redirect("/personalCalendar")
+    if(item == true && passwordMatch == true){        
+        res.send("Success")
     }
     else if(item == false){
         res.send("Username does not exist go sign up")
     }
+    else if(item == true && passwordMatch == false)[
+        res.send("The password is wrong")
+    ]
 })
 
 app.post("/sendActivity", function(req, res){

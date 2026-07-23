@@ -44,7 +44,13 @@
                 "body" : JSON.stringify(userObject)
             })
             var responseText = await response.text()
-             alert(responseText)
+            if(responseText == "Username does not exist go sign up" || responseText == "The password is wrong"){                
+                alert(responseText)
+            }
+            else if(responseText == "Success"){
+                console.log(responseText)
+                window.location.href = "/personalCalendar"
+            }
         }
     </script>
 </body>
