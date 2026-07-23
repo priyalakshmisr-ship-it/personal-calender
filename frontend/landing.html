@@ -36,13 +36,15 @@
                 "username" : usernameInput,
                 "password" : passwordInput
             }
-            await fetch("/receiveSignin",{
+            var response = await fetch("/receiveSignin",{
                 "method" : "POST",
                 "headers" : {
                     "Content-type" : "application/json"
                 },
                 "body" : JSON.stringify(userObject)
             })
+            var responseText = await response.text()
+             alert(responseText)
         }
     </script>
 </body>

@@ -46,6 +46,22 @@ app.post('/receiveSignin', function(req,res){
     var username = req.body.username
     var password = req.body.password
     // res.redirect("/personalCalendar")
+    var userDatabaseFile = fs.readFileSync(userDatabasePath,"utf-8")
+var userDatabaseArray = JSON.parse(userDatabaseFile)
+     var item = false
+    for(i=0;i<userDatabaseArray.length;i=i+1){        
+        if(userDatabaseArray[i].username == username){             
+             item = true 
+             break
+        }       
+    }
+    if(item == true){
+        
+        res.redirect("/personalCalendar")
+    }
+    else if(item == false){
+        res.send("Username does not exist go sign up")
+    }
 })
 
 app.post("/sendActivity", function(req, res){
@@ -79,4 +95,4 @@ app.post("/sendActivity", function(req, res){
 
 app.listen(2530, function () {
     console.log("Server has started");
-});
+}); 
