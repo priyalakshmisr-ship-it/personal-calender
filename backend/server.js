@@ -10,23 +10,25 @@ const app = express()
 app.use(express.json())  
 
 app.get('/',function(req,res){
-    res.sendFile('C:/Users/mihir/OneDrive/Desktop/Classes/Pranessh Web Dev Classes/Personal Calendar/frontend/landing.html')
+    res.sendFile('C:/Users/balag/OneDrive/Desktop/Pranessh coding/all fullstack projects/Personal calender/frontend/landing.html')
 })
 
 app.get('/personalCalendar',function(req,res){
-    res.sendFile('C:/Users/mihir/OneDrive/Desktop/Classes/Pranessh Web Dev Classes/Personal Calendar/frontend/index.html')
+    res.sendFile('C:/Users/balag/OneDrive/Desktop/Pranessh coding/all fullstack projects/Personal calender/frontend/index.html')
 })
 
 app.post('/receiveSignup', function(req,res){
     var username = req.body.username
     var password = req.body.password
     const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(password, salt);
+    const passwordhash = bcrypt.hashSync(password, salt);
+    const usernamehash = bcrypt.hashSync(username, salt);
     var userDatabaseFile = fs.readFileSync(userDatabasePath,"utf-8")
     var userDatabaseArray = JSON.parse(userDatabaseFile)
      var item = false
     for(i=0;i<userDatabaseArray.length;i=i+1){        
-        if(userDatabaseArray[i].username == username){             
+        if( bcrypt.compareSync( username,userDatabaseArray[i].username)== true ){  
+                      
              item = true 
              break
         }       
@@ -36,8 +38,8 @@ app.post('/receiveSignup', function(req,res){
     }
     else if(item == false){
         var obj = {
-            "username" : username,
-            "password" : hash
+            "username" : usernamehash,
+            "password" : passwordhash
         }
         userDatabaseArray.push(obj)
         fs.writeFileSync(userDatabasePath, JSON.stringify(userDatabaseArray))
@@ -53,7 +55,7 @@ app.post('/receiveSignin', function(req,res){
     var item = false
     var passwordMatch = false
     for(i=0;i<userDatabaseArray.length;i=i+1){        
-        if(userDatabaseArray[i].username == username){             
+        if(bcrypt.compareSync(  username,  userDatabaseArray[i].username) ==true ){             
              item = true 
              if(bcrypt.compareSync(password, userDatabaseArray[i].password) == true){
                 passwordMatch = true
