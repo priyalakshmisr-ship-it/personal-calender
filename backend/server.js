@@ -10,11 +10,12 @@ const app = express()
 app.use(express.json())  
 
 app.get('/',function(req,res){
-    res.sendFile('C:/Users/balag/OneDrive/Desktop/Pranessh coding/all fullstack projects/Personal calender/frontend/landing.html')
+    console.log(__dirname)
+    res.sendFile(path.join(__dirname,"..","frontend","landing.html"))
 })
 
 app.get('/personalCalendar',function(req,res){
-    res.sendFile('C:/Users/balag/OneDrive/Desktop/Pranessh coding/all fullstack projects/Personal calender/frontend/index.html')
+    res.sendFile(path.join(__dirname,"..","frontend","index.html"))
 })
 
 app.post('/receiveSignup', function(req,res){
