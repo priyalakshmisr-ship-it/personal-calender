@@ -3,8 +3,8 @@ const cors = require("cors")
 const path = require("path")
 const bcrypt = require("bcryptjs")
 const fs = require('fs')
-const databasePath = '../database/activityData.json'
-const userDatabasePath = '../database/users.json'
+const databasePath = path.join(__dirname,"..","database","activityData.json")
+const userDatabasePath = path.join(__dirname,"..","database","users.json")
 
 const app = express()
 app.use(express.json())  
@@ -14,8 +14,41 @@ app.get('/',function(req,res){
     res.sendFile(path.join(__dirname,"..","frontend","landing.html"))
 })
 
-app.get('/personalCalendar',function(req,res){
-    res.sendFile(path.join(__dirname,"..","frontend","index.html"))
+app.get('/treasureLink',
+function(req,res,next){
+    var password = req.query.password  
+    if(password == "Pranessh"){
+        next() //This is a special function that the middleware functions get as the third parameter and using this function we are able to go the next available function
+    } 
+}, //security function which will stop us from going to the treasure function and we call this the middleware function
+function(req,res){
+    res.send("You found the treasure") //treasure function
+}
+)
+
+app.get('/personalCalendar',
+function(req, res, next){
+    var username = req.query.username
+    var password = req.query.password  
+    var userDatabaseFile = fs.readFileSync(userDatabasePath,"utf-8")
+    var userDatabaseArray = JSON.parse(userDatabaseFile)
+    var item = false
+    var passwordMatch = false
+    for(i=0;i<userDatabaseArray.length;i=i+1){        
+        if( bcrypt.compareSync(username,userDatabaseArray[i].username) == true ){
+            item = true 
+            if(bcrypt.compareSync (password, userDatabaseArray[i].password) == true){
+                passwordMatch = true
+            }
+            break
+        }       
+    }
+    if(item == true && passwordMatch == true){
+        next()
+    }
+},
+function(req,res){
+    res.sendFile(path.join(__dirname,"..","frontend","index.html")) //treasure function
 })
 
 app.post('/receiveSignup', function(req,res){
