@@ -28,7 +28,6 @@
             var responseText = await response.text()
             alert(responseText)
         }
-
         async function signIn(){
             var usernameInput = document.getElementById("username").value 
             var passwordInput = document.getElementById("password").value 
@@ -49,7 +48,7 @@
             }
             else if(responseText == "Success"){
                 console.log(responseText)
-                window.location.href = "/personalCalendar"
+                window.location.href = "/personalCalendar?username="+usernameInput+"&password="+passwordInput
             }
         }
     </script>
