@@ -2,12 +2,14 @@ const express = require("express")
 const cors = require("cors")
 const path = require("path")
 const bcrypt = require("bcryptjs")
+const cookieParser = require("cookie-parser")
 const fs = require('fs')
 const databasePath = path.join(__dirname,"..","database","activityData.json")
 const userDatabasePath = path.join(__dirname,"..","database","users.json")
 
 const app = express()
 app.use(express.json())  
+app.use(cookieParser())
 
 app.get('/',function(req,res){
     console.log(__dirname) 
@@ -100,7 +102,10 @@ app.post('/receiveSignin', function(req,res){
              break
         }       
     }
-    if(item == true && passwordMatch == true){        
+    if(item == true && passwordMatch == true){ 
+        const passwordhash = bcrypt.hashSync(password, salt);
+        res.cookie("username", username)
+        res.cookie("password", passwordhash)       
         res.send("Success")
 
     }
@@ -112,10 +117,10 @@ app.post('/receiveSignin', function(req,res){
     ] 
 })
 
-app.get("/SendActivity", function(req,res){
+app.get("/getAllActivities", function(req,res){
     var activityDatabaseFile= fs.readFileSync(databasePath,"utf-8")
     var activityDatabaseObject= JSON.parse(activityDatabaseFile)
-    var username = req.query.username
+    var username = req.cookies.username
     var activity = activityDatabaseObject[username] 
     res.json(activity)
 })

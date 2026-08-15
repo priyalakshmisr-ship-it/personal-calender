@@ -73,7 +73,7 @@ let activity = document.getElementById("activity").value;
 }
 
  async function receiveactivity(){
-            var response = await fetch("/SendActivity?username="+localStorage.getItem("username")
+            var response = await fetch("/getAllActivities"
                 // {
                 //     "method" : "GET"
                 // }
