@@ -15,7 +15,7 @@ input{  width:100%;  padding:10px; box-sizing:border-box;}
 button{ width:100%; padding:10px;  }
 
 
-</style>
+</style> 
 
 </head>
 
@@ -40,25 +40,23 @@ button{ width:100%; padding:10px;  }
 <script>
 
 async function addEvent(){
-    let username = document.getElementById("username").value
-    let activity = document.getElementById("activity").value;
+    let username = document.getElementById("username").value ;
+let activity = document.getElementById("activity").value;
     let date = document.getElementById("date").value;
     let card=document.createElement("div");
     let title=document.createElement("p");
     title.textContent=activity;
     let eventDate=document.createElement("p");
-    eventDate.textContent=date
+    eventDate.textContent=date;
     let deleteBtn=document.createElement("button");
-    deleteBtn.textContent="🗑️ Delete";
-     deleteBtn.onclick=function(){
-        card.remove();
-    }
+    deleteBtn.textContent=" Delete";
+    
     card.appendChild(title);
     card.appendChild(eventDate);
     card.appendChild(deleteBtn);
     document.getElementById("eventList").appendChild(card);
     document.getElementById("activity").value="";
-    document.getElementById("date").value="";
+    document.getElementById("date").value="" ;
     var jsonObject = {
         username: username,
         activity: activity,
@@ -73,6 +71,36 @@ async function addEvent(){
         body: JSON.stringify(jsonObject)
     });
 }
+
+ async function receiveactivity(){
+            var response = await fetch("/SendActivity?username="+localStorage.getItem("username")
+                // {
+                //     "method" : "GET"
+                // }
+            )
+            var jsonData = await response.json()
+            for(i=0 ; i<jsonData.length; i=i+1){
+                  let card = document.createElement("div");
+               localStorage.setItem("activity", jsonData[i].activity);
+                 let previousactivity = localStorage.getItem("activity");
+             let displayactivity = document.createElement("p");
+                displayactivity.textContent = previousactivity;
+           let eventDate = document.createElement("p");
+              eventDate.textContent = jsonData[i].date;
+             let deleteBtn = document.createElement("button");
+             deleteBtn.textContent = " Delete";
+          card.appendChild(displayactivity);
+              card.appendChild(eventDate);
+                card.appendChild(deleteBtn);
+
+    document.getElementById("eventList").appendChild(card)
+            }
+             
+            console.log(jsonData)
+
+
+ }
+ receiveactivity()
  
  </script>
 </html>

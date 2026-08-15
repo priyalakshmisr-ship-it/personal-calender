@@ -36,6 +36,7 @@
                 "username" : usernameInput,
                 "password" : passwordInput
             }
+          localStorage.setItem('username',usernameInput)  
             var response = await fetch("/receiveSignin",{
                 "method" : "POST",
                 "headers" : {
@@ -50,6 +51,7 @@
             else if(responseText == "Success"){
                 console.log(responseText)
                 window.location.href = "/personalCalendar"
+                    window.location.href = "/personalCalendar?username="+usernameInput+"&password="+passwordInput
             }
         }
     </script>
