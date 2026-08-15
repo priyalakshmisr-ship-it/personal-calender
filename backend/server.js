@@ -10,7 +10,7 @@ const app = express()
 app.use(express.json())  
 
 app.get('/',function(req,res){
-    console.log(__dirname)
+    console.log(__dirname) 
     res.sendFile(path.join(__dirname,"..","frontend","landing.html"))
 })
 
@@ -59,6 +59,8 @@ app.post('/receiveSignup', function(req,res){
     const usernamehash = bcrypt.hashSync(username, salt);
     var userDatabaseFile = fs.readFileSync(userDatabasePath,"utf-8")
     var userDatabaseArray = JSON.parse(userDatabaseFile)
+  
+
      var item = false
     for(i=0;i<userDatabaseArray.length;i=i+1){        
         if( bcrypt.compareSync( username,userDatabaseArray[i].username)== true ){  
@@ -91,6 +93,7 @@ app.post('/receiveSignin', function(req,res){
     for(i=0;i<userDatabaseArray.length;i=i+1){        
         if(bcrypt.compareSync(  username,  userDatabaseArray[i].username) ==true ){             
              item = true 
+             
              if(bcrypt.compareSync(password, userDatabaseArray[i].password) == true){
                 passwordMatch = true
              }
@@ -99,13 +102,22 @@ app.post('/receiveSignin', function(req,res){
     }
     if(item == true && passwordMatch == true){        
         res.send("Success")
+
     }
     else if(item == false){
         res.send("Username does not exist go sign up")
     }
     else if(item == true && passwordMatch == false)[
         res.send("The password is wrong")
-    ]
+    ] 
+})
+
+app.get("/SendActivity", function(req,res){
+    var activityDatabaseFile= fs.readFileSync(databasePath,"utf-8")
+    var activityDatabaseObject= JSON.parse(activityDatabaseFile)
+    var username = req.query.username
+    var activity = activityDatabaseObject[username] 
+    res.json(activity)
 })
 
 app.post("/sendActivity", function(req, res){
