@@ -10,7 +10,7 @@ const userDatabasePath = path.join(__dirname,"..","database","users.json")
 const app = express()
 app.use(express.json())  
 app.use(cookieParser())
-
+const salt = bcrypt.genSaltSync(10)
 app.get('/',function(req,res){
     console.log(__dirname) 
     res.sendFile(path.join(__dirname,"..","frontend","landing.html"))
@@ -30,16 +30,16 @@ function(req,res){
 
 app.get('/personalCalendar',
 function(req, res, next){
-    var username = req.query.username
-    var password = req.query.password  
+    var username = req.cookies.username
+    var password = req.cookies.password  
     var userDatabaseFile = fs.readFileSync(userDatabasePath,"utf-8")
     var userDatabaseArray = JSON.parse(userDatabaseFile)
     var item = false
     var passwordMatch = false
     for(i=0;i<userDatabaseArray.length;i=i+1){        
-        if( bcrypt.compareSync(username,userDatabaseArray[i].username) == true ){
+        if( username === userDatabaseArray[i].username){
             item = true 
-            if(bcrypt.compareSync (password, userDatabaseArray[i].password) == true){
+            if(password == userDatabaseArray[i].password){
                 passwordMatch = true
             }
             break
@@ -47,6 +47,9 @@ function(req, res, next){
     }
     if(item == true && passwordMatch == true){
         next()
+    }
+    else{
+        res.redirect("/")
     }
 },
 function(req,res){
@@ -56,16 +59,16 @@ function(req,res){
 app.post('/receiveSignup', function(req,res){
     var username = req.body.username
     var password = req.body.password
-    const salt = bcrypt.genSaltSync(10);
+    
     const passwordhash = bcrypt.hashSync(password, salt);
-    const usernamehash = bcrypt.hashSync(username, salt);
+   // const usernamehash = bcrypt.hashSync(username, salt);
     var userDatabaseFile = fs.readFileSync(userDatabasePath,"utf-8")
     var userDatabaseArray = JSON.parse(userDatabaseFile)
   
 
      var item = false
     for(i=0;i<userDatabaseArray.length;i=i+1){        
-        if( bcrypt.compareSync( username,userDatabaseArray[i].username)== true ){  
+        if( username === userDatabaseArray[i].username ){  
                       
              item = true 
              break
@@ -76,7 +79,7 @@ app.post('/receiveSignup', function(req,res){
     }
     else if(item == false){
         var obj = {
-            "username" : usernamehash,
+            "username" : username,
             "password" : passwordhash
         }
         userDatabaseArray.push(obj)
@@ -93,7 +96,7 @@ app.post('/receiveSignin', function(req,res){
     var item = false
     var passwordMatch = false
     for(i=0;i<userDatabaseArray.length;i=i+1){        
-        if(bcrypt.compareSync(  username,  userDatabaseArray[i].username) ==true ){             
+        if(username === userDatabaseArray[i].username ){             
              item = true 
              
              if(bcrypt.compareSync(password, userDatabaseArray[i].password) == true){
