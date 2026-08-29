@@ -50,6 +50,9 @@ let activity = document.getElementById("activity").value;
     eventDate.textContent=date;
     let deleteBtn=document.createElement("button");
     deleteBtn.textContent=" Delete";
+    deleteBtn.addEventListener('click',function(event){
+     event.target.parentElement.style.display="none"
+    })
     
     card.appendChild(title);
     card.appendChild(eventDate);
@@ -89,6 +92,28 @@ let activity = document.getElementById("activity").value;
               eventDate.textContent = jsonData[i].date;
              let deleteBtn = document.createElement("button");
              deleteBtn.textContent = " Delete";
+             deleteBtn.addEventListener('click', async function(event){
+     event.target.parentElement.style.display="none"
+           let content =  event.target.parentElement.children[0].innerText 
+           let date = event.target.parentElement.children[1].innerText
+           console.log(date) 
+           console.log( event.target.parentElement.children)
+            var jsonObject = {
+        username:  localStorage.getItem('username'),
+        activity: content,
+        date: date
+    };
+
+    await fetch("/Receivedeletion", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(jsonObject)
+    });
+           
+    }) 
+
           card.appendChild(displayactivity);
               card.appendChild(eventDate);
                 card.appendChild(deleteBtn);

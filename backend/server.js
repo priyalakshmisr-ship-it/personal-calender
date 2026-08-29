@@ -95,20 +95,23 @@ app.post('/receiveSignin', function(req,res){
     var userDatabaseArray = JSON.parse(userDatabaseFile)
     var item = false
     var passwordMatch = false
+    var stored_password=""
     for(i=0;i<userDatabaseArray.length;i=i+1){        
         if(username === userDatabaseArray[i].username ){             
              item = true 
              
              if(bcrypt.compareSync(password, userDatabaseArray[i].password) == true){
-                passwordMatch = true
+                passwordMatch = true 
+                stored_password=userDatabaseArray[i].password
              }
              break
         }       
     }
     if(item == true && passwordMatch == true){ 
-        const passwordhash = bcrypt.hashSync(password, salt);
+        const password = stored_password
+        
         res.cookie("username", username)
-        res.cookie("password", passwordhash)       
+        res.cookie("password", password)       
         res.send("Success")
 
     }
@@ -156,6 +159,32 @@ app.post("/sendActivity", function(req, res){
     }
     fs.writeFileSync(databasePath, JSON.stringify(databaseObj))
 })   
+app.post("/Receivedeletion", function(req , res){
+ var username = req.body.username
+    var activity = req.body.activity
+    var DatabaseFile = fs.readFileSync(databasePath,"utf-8")
+    var activityDatabaseObject= JSON.parse(DatabaseFile)
+    
+  var activityArray = activityDatabaseObject[username]  
+  for(i=0 ; i<activityArray.length ; i=i+1){
+            if(activityArray[i].activity === activity){
+               activityArray.splice(i, 1)
+               
+            break
+        } 
+              
+    }
+    console.log(activityArray + "checking1")
+    console.log(username + "checking2")
+    console.log(activity + " checking3")
+    activityDatabaseObject[username]=activityArray
+    fs.writeFileSync(databasePath, JSON.stringify(activityDatabaseObject))
+        res.send("deleted")
+}
+)
+
+
+
 
 app.listen(2530, function () {
     console.log("Server has started");
