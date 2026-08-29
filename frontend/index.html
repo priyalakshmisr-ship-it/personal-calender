@@ -1,131 +1,198 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<title>Personal Planner</title>
+    <title>Personal Planner</title>
 
-<style>
+    <style>
+      body {
+        background: #5398bacc;
+        font-family: Arial;
+      }
+      .total {
+        width: 400px;
+        margin: 40px auto;
+        background: lightsalmon;
+        padding: 20px;
+        border-radius: 10px;
+      }
+      h1 {
+        text-align: center;
+      }
+      input {
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+      button {
+        width: 100%;
+        padding: 10px;
+      }
+    </style>
+  </head>
 
-body{background:#5398bacc;  font-family:Arial;}
-.total{  width:400px;  margin:40px auto;  background:lightsalmon; padding:20px; border-radius:10px; ;}
-h1{ text-align:center;}
-input{  width:100%;  padding:10px; box-sizing:border-box;}
-button{ width:100%; padding:10px;  }
+  <body>
+    <br /><br /><br /><br /><br /><br /><br />
+    <div class="total">
+      <h1>Personal Planner</h1>
 
+      <input type="text" id="username" placeholder="Enter username" />
 
-</style> 
+      <input type="text" id="activity" placeholder="Enter Activity" />
 
-</head>
+      <input type="date" id="date" />
 
-<body>
-<br><br><br><br><br><br><br>
-<div class="total" >
+      <button onclick="addEvent()">Add Event</button>
+      <div id="eventList"></div>
+    </div>
+  </body>
+  <script>
+    async function addEvent() {
+      let username = document.getElementById("username").value;
+      let activity = document.getElementById("activity").value;
+      let date = document.getElementById("date").value;
+      let card = document.createElement("div");
+      let title = document.createElement("p");
+      title.textContent = activity;
+      let eventDate = document.createElement("p");
+      eventDate.textContent = date;
+      let deleteBtn = document.createElement("button");
+      deleteBtn.textContent = " Delete";
+      deleteBtn.addEventListener("click", async function (event) {
+        event.target.parentElement.style.display = "none";
+        let content = event.target.parentElement.children[0].innerText;
+        let date = event.target.parentElement.children[1].innerText;
+        console.log(date);
+        console.log(event.target.parentElement.children);
+        var jsonObject = {
+          username: localStorage.getItem("username"),
+          activity: content,
+          date: date,
+        };
 
-    <h1> Personal Planner</h1>
+        await fetch("/Receivedeletion", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(jsonObject),
+        });
+      });
+      let editBtn = document.createElement("button");
+      editBtn.textContent = " Edit";
+      editBtn.addEventListener("click",async function (event) {
+        var oldActivity = event.target.parentElement.children[0].innerText;
+            var activityInput = prompt("Write the new activity")
+            var dateInput = prompt("Write the new date")
+            var jsonObject = {
+            username: localStorage.getItem("username"),
+            oldActivity: oldActivity,
+            activity: activityInput,
+            date: dateInput,
+          };
 
-    <input type="text" id="username" placeholder="Enter username">
+          await fetch("/ReceiveEditing", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(jsonObject),
+          });
+        });
+      
 
-    <input  type="text"  id="activity"  placeholder="Enter Activity">
-
-    <input type="date" id="date">
-
-    <button onclick="addEvent()">  Add Event </button> 
-<div id="eventList"></div>
-
-</div>
-
-</body>
-<script>
-
-async function addEvent(){
-    let username = document.getElementById("username").value ;
-let activity = document.getElementById("activity").value;
-    let date = document.getElementById("date").value;
-    let card=document.createElement("div");
-    let title=document.createElement("p");
-    title.textContent=activity;
-    let eventDate=document.createElement("p");
-    eventDate.textContent=date;
-    let deleteBtn=document.createElement("button");
-    deleteBtn.textContent=" Delete";
-    deleteBtn.addEventListener('click',function(event){
-     event.target.parentElement.style.display="none"
-    })
-    
-    card.appendChild(title);
-    card.appendChild(eventDate);
-    card.appendChild(deleteBtn);
-    document.getElementById("eventList").appendChild(card);
-    document.getElementById("activity").value="";
-    document.getElementById("date").value="" ;
-    var jsonObject = {
+      card.appendChild(title);
+      card.appendChild(eventDate);
+      card.appendChild(editBtn);
+      card.appendChild(deleteBtn);
+      document.getElementById("eventList").appendChild(card);
+      document.getElementById("activity").value = "";
+      document.getElementById("date").value = "";
+      var jsonObject = {
         username: username,
         activity: activity,
-        date: date
-    };
+        date: date,
+      };
 
-    await fetch("/sendActivity", {
+      await fetch("/sendActivity", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(jsonObject)
-    });
-}
+        body: JSON.stringify(jsonObject),
+      });
+    }
 
- async function receiveactivity(){
-            var response = await fetch("/getAllActivities"
-                // {
-                //     "method" : "GET"
-                // }
-            )
-            var jsonData = await response.json()
-            for(i=0 ; i<jsonData.length; i=i+1){
-                  let card = document.createElement("div");
-               localStorage.setItem("activity", jsonData[i].activity);
-                 let previousactivity = localStorage.getItem("activity");
-             let displayactivity = document.createElement("p");
-                displayactivity.textContent = previousactivity;
-           let eventDate = document.createElement("p");
-              eventDate.textContent = jsonData[i].date;
-             let deleteBtn = document.createElement("button");
-             deleteBtn.textContent = " Delete";
-             deleteBtn.addEventListener('click', async function(event){
-     event.target.parentElement.style.display="none"
-           let content =  event.target.parentElement.children[0].innerText 
-           let date = event.target.parentElement.children[1].innerText
-           console.log(date) 
-           console.log( event.target.parentElement.children)
+    async function receiveactivity() {
+      var response = await fetch(
+        "/getAllActivities",
+        // {
+        //     "method" : "GET"
+        // }
+      );
+      var jsonData = await response.json();
+      for (i = 0; i < jsonData.length; i = i + 1) {
+        let card = document.createElement("div");
+        localStorage.setItem("activity", jsonData[i].activity);
+        let previousactivity = localStorage.getItem("activity");
+        let displayactivity = document.createElement("p");
+        displayactivity.textContent = previousactivity;
+        let eventDate = document.createElement("p");
+        eventDate.textContent = jsonData[i].date;
+        let deleteBtn = document.createElement("button");
+        deleteBtn.textContent = " Delete";
+        deleteBtn.addEventListener("click", async function (event) {
+          event.target.parentElement.style.display = "none";
+          let content = event.target.parentElement.children[0].innerText;
+          let date = event.target.parentElement.children[1].innerText;
+          console.log(date);
+          console.log(event.target.parentElement.children);
+          var jsonObject = {
+            username: localStorage.getItem("username"),
+            activity: content,
+            date: date,
+          };
+
+          await fetch("/Receivedeletion", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(jsonObject),
+          });
+        });
+        let editBtn = document.createElement("button");
+      editBtn.textContent = " Edit";
+      editBtn.addEventListener("click",async function (event) {
+            var activityInput = prompt("Write the new activity")
+            var dateInput = prompt("Write the new date")
             var jsonObject = {
-        username:  localStorage.getItem('username'),
-        activity: content,
-        date: date
-    };
+            username: localStorage.getItem("username"),
+            activity: activityInput,
+            date: dateInput,
+          };
 
-    await fetch("/Receivedeletion", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(jsonObject)
-    });
-           
-    }) 
+          await fetch("/ReceiveEditing", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(jsonObject),
+          });
+        });
 
-          card.appendChild(displayactivity);
-              card.appendChild(eventDate);
-                card.appendChild(deleteBtn);
+        card.appendChild(displayactivity);
+        card.appendChild(eventDate);
+        card.appendChild(editBtn);
+        card.appendChild(deleteBtn);
 
-    document.getElementById("eventList").appendChild(card)
-            }
-             
-            console.log(jsonData)
+        document.getElementById("eventList").appendChild(card);
+      }
 
-
- }
- receiveactivity()
- 
- </script>
+      console.log(jsonData);
+    }
+    receiveactivity();
+  </script>
 </html>

@@ -183,7 +183,30 @@ app.post("/Receivedeletion", function(req , res){
 }
 )
 
-
+app.post("/ReceiveEditing", function(req , res){
+ var username = req.body.username
+ var oldActivity = req.body.oldActivity
+    var newActivity = req.body.activity
+    var date = req.body.date
+    var DatabaseFile = fs.readFileSync(databasePath,"utf-8")
+    var activityDatabaseObject= JSON.parse(DatabaseFile)
+    
+  var activityArray = activityDatabaseObject[username]  
+  for(i=0 ; i<activityArray.length ; i=i+1){
+            if(activityArray[i].activity === oldActivity){
+               activityArray[i].activity = newActivity
+               activityArray[i].date = date
+            break
+        } 
+              
+    }
+    console.log(activityArray + "checking1")
+    console.log(username + "checking2")
+    activityDatabaseObject[username]=activityArray
+    fs.writeFileSync(databasePath, JSON.stringify(activityDatabaseObject))
+        res.send("edited")
+}
+)
 
 
 app.listen(2530, function () {
