@@ -191,18 +191,24 @@ app.post("/ReceiveEditing", function(req , res){
     var DatabaseFile = fs.readFileSync(databasePath,"utf-8")
     var activityDatabaseObject= JSON.parse(DatabaseFile)
     
-  var activityArray = activityDatabaseObject[username]  
-  for(i=0 ; i<activityArray.length ; i=i+1){
-            if(activityArray[i].activity === oldActivity){
-               activityArray[i].activity = newActivity
-               activityArray[i].date = date
+  var activityArray2 = activityDatabaseObject[username]  
+  console.log(activityArray2 ,  "checking4")
+  console.log( activityDatabaseObject[username],"checking5")
+  for(i=0 ; i<activityArray2.length ; i=i+1){
+            if(activityArray2[i].activity === oldActivity){
+               activityArray2[i].activity = newActivity
+               activityArray2[i].date = date
             break
         } 
               
     }
-    console.log(activityArray + "checking1")
+    console.log(activityDatabaseObject)
+    console.log(activityArray2 , "checking1")
     console.log(username + "checking2")
-    activityDatabaseObject[username]=activityArray
+    console.log(activityDatabaseObject[username])
+    activityDatabaseObject[username]=activityArray2
+    console.log(oldActivity , "checking6")
+    
     fs.writeFileSync(databasePath, JSON.stringify(activityDatabaseObject))
         res.send("edited")
 }

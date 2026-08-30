@@ -82,10 +82,15 @@
       });
       let editBtn = document.createElement("button");
       editBtn.textContent = " Edit";
+      
       editBtn.addEventListener("click",async function (event) {
+          console.log(event.target.parentElement)
         var oldActivity = event.target.parentElement.children[0].innerText;
+        console.log(oldActivity)
             var activityInput = prompt("Write the new activity")
             var dateInput = prompt("Write the new date")
+                event.target.parentElement.children[0].innerText=activityInput 
+              event.target.parentElement.children[1].innerText=dateInput
             var jsonObject = {
             username: localStorage.getItem("username"),
             oldActivity: oldActivity,
@@ -143,15 +148,18 @@
         eventDate.textContent = jsonData[i].date;
         let deleteBtn = document.createElement("button");
         deleteBtn.textContent = " Delete";
+       
         deleteBtn.addEventListener("click", async function (event) {
           event.target.parentElement.style.display = "none";
           let content = event.target.parentElement.children[0].innerText;
           let date = event.target.parentElement.children[1].innerText;
           console.log(date);
           console.log(event.target.parentElement.children);
+           
           var jsonObject = {
             username: localStorage.getItem("username"),
             activity: content,
+            
             date: date,
           };
 
@@ -163,17 +171,27 @@
             body: JSON.stringify(jsonObject),
           });
         });
+
         let editBtn = document.createElement("button");
+          
       editBtn.textContent = " Edit";
+        
       editBtn.addEventListener("click",async function (event) {
+          console.log(event.target.parentElement)
+        var oldActivity = event.target.parentElement.children[0].innerText;
+        console.log(oldActivity)
             var activityInput = prompt("Write the new activity")
             var dateInput = prompt("Write the new date")
+            
             var jsonObject = {
             username: localStorage.getItem("username"),
+            oldActivity: oldActivity,
             activity: activityInput,
             date: dateInput,
           };
 
+              event.target.parentElement.children[0].innerText=activityInput 
+              event.target.parentElement.children[1].innerText=dateInput
           await fetch("/ReceiveEditing", {
             method: "POST",
             headers: {
@@ -182,6 +200,9 @@
             body: JSON.stringify(jsonObject),
           });
         });
+     
+
+        
 
         card.appendChild(displayactivity);
         card.appendChild(eventDate);
